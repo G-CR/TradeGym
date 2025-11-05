@@ -11,11 +11,11 @@ yfinance>=0.2.28
 # 可视化
 matplotlib>=3.7.0
 plotly>=5.14.0
-mplfinance>=0.12.9
+mplfinance>=0.12.9b0
 
 # 技术指标计算
 # ta-lib>=0.4.28  # 可选，如果安装困难可以跳过
-pandas-ta>=0.3.14b0
+# pandas-ta>=0.3.14b0  # 如果安装失败，可以尝试: pip install pandas_ta
 
 # 进度条
 tqdm>=4.65.0
