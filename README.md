@@ -20,11 +20,13 @@
 ├── data_fetcher.py               # 数据获取模块
 ├── backtest_engine.py            # 回测引擎核心
 ├── strategies.py                 # 策略模块（5个内置策略）
+├── strategy_manager.py           # 策略管理器（统一策略选择接口）⭐新增
 ├── performance_analyzer.py       # 性能分析模块
 ├── visualizer.py                 # 可视化模块
 ├── example_single_strategy.py    # 示例1：单策略回测
 ├── example_compare_strategies.py # 示例2：多策略对比
 ├── example_custom_strategy.py    # 示例3：自定义策略
+├── example_strategy_manager.py   # 示例4：使用策略管理器⭐新增
 └── outputs/                      # 输出目录（图表等）
 ```
 
@@ -54,7 +56,15 @@ python example_compare_strategies.py
 
 一次性测试所有内置策略，找出表现最好的那个！
 
-### 4. 创建自己的策略
+### 4. 使用策略管理器（推荐）⭐
+
+```bash
+python example_strategy_manager.py
+```
+
+使用统一的策略管理器接口，轻松选择和切换不同策略！
+
+### 5. 创建自己的策略
 
 ```bash
 python example_custom_strategy.py
@@ -92,6 +102,46 @@ python example_custom_strategy.py
 - 参数：周期=20，标准差=2.0
 
 ## 💻 使用示例
+
+### 推荐用法：使用策略管理器 ⭐
+
+```python
+from data_fetcher import DataFetcher
+from backtest_engine import BacktestEngine
+from strategy_manager import StrategyManager
+from performance_analyzer import PerformanceAnalyzer
+
+# 1. 创建策略管理器
+manager = StrategyManager()
+
+# 2. 查看所有可用策略
+manager.list_strategies(detailed=True)
+
+# 3. 获取数据
+fetcher = DataFetcher()
+data = fetcher.get_stock_data(
+    symbol='000001',
+    start_date='20230101',
+    end_date='20241101',
+    adjust='qfq'
+)
+
+# 4. 使用策略管理器创建策略（使用默认参数）
+strategy = manager.get_strategy('double_ma')
+
+# 或者使用自定义参数
+strategy = manager.get_strategy('macd', fast_period=10, slow_period=20, signal_period=5)
+
+# 5. 运行回测
+engine = BacktestEngine(initial_cash=100000, commission_rate=0.0003)
+engine.set_data(data)
+engine.set_strategy(strategy)
+results = engine.run()
+
+# 6. 分析结果
+analyzer = PerformanceAnalyzer(results)
+analyzer.print_summary()
+```
 
 ### 基础用法
 
