@@ -29,9 +29,9 @@ def main():
     
     fetcher = DataFetcher()
     data = fetcher.get_stock_data(
-        symbol='000001',      # 平安银行
-        start_date='20230101',
-        end_date='20241101',
+        symbol='002352',      # 平安银行
+        start_date='20241201',
+        end_date='20251201',
         adjust='qfq'
     )
     print(f"✓ 成功获取数据，共 {len(data)} 条记录\n")
