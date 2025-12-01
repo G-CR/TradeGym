@@ -29,7 +29,7 @@ def main():
     
     fetcher = DataFetcher()
     data = fetcher.get_stock_data(
-        symbol='002352',      # 平安银行
+        symbol='002352',
         start_date='20241201',
         end_date='20251201',
         adjust='qfq'
