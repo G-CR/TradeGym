@@ -20,11 +20,10 @@
 ├── data_fetcher.py               # 数据获取模块
 ├── backtest_engine.py            # 回测引擎核心
 ├── strategies.py                 # 策略模块（5个内置策略）
+├── strategy_manager.py           # 策略管理器（统一策略选择接口）
 ├── performance_analyzer.py       # 性能分析模块
 ├── visualizer.py                 # 可视化模块
-├── example_single_strategy.py    # 示例1：单策略回测
-├── example_compare_strategies.py # 示例2：多策略对比
-├── example_custom_strategy.py    # 示例3：自定义策略
+├── example_strategy_manager.py   # 示例：统一入口示例（单策略/多策略/对比）
 └── outputs/                      # 输出目录（图表等）
 ```
 
@@ -41,26 +40,23 @@ pip install -r requirements.txt
 ### 2. 运行你的第一个回测
 
 ```bash
-python example_single_strategy.py
+python example_strategy_manager.py
 ```
 
-这将运行一个双均线策略的完整回测，并生成详细的分析报告和可视化图表。
+这将通过策略管理器运行一个双均线策略的完整回测，并生成详细的分析报告和可视化图表。
 
-### 3. 对比多个策略
+### 3. 使用策略管理器（推荐）⭐ 统一入口
 
 ```bash
-python example_compare_strategies.py
+python example_strategy_manager.py
 ```
 
-一次性测试所有内置策略，找出表现最好的那个！
-
-### 4. 创建自己的策略
-
-```bash
-python example_custom_strategy.py
-```
-
-查看如何创建和测试自定义策略的完整示例。
+脚本内包含：
+- **示例 1**：单个策略的完整回测流程  
+- **示例 2**：使用自定义参数运行策略  
+- **示例 3**：查看策略详情  
+- **示例 4**：一次性测试所有内置策略并输出对比结果  
+相当于一个“统一入口”示例，覆盖单策略、多策略对比等常见用法。
 
 ## 📊 内置策略
 
@@ -92,6 +88,46 @@ python example_custom_strategy.py
 - 参数：周期=20，标准差=2.0
 
 ## 💻 使用示例
+
+### 推荐用法：使用策略管理器 ⭐
+
+```python
+from data_fetcher import DataFetcher
+from backtest_engine import BacktestEngine
+from strategy_manager import StrategyManager
+from performance_analyzer import PerformanceAnalyzer
+
+# 1. 创建策略管理器
+manager = StrategyManager()
+
+# 2. 查看所有可用策略
+manager.list_strategies(detailed=True)
+
+# 3. 获取数据
+fetcher = DataFetcher()
+data = fetcher.get_stock_data(
+    symbol='000001',
+    start_date='20230101',
+    end_date='20241101',
+    adjust='qfq'
+)
+
+# 4. 使用策略管理器创建策略（使用默认参数）
+strategy = manager.get_strategy('double_ma')
+
+# 或者使用自定义参数
+strategy = manager.get_strategy('macd', fast_period=10, slow_period=20, signal_period=5)
+
+# 5. 运行回测
+engine = BacktestEngine(initial_cash=100000, commission_rate=0.0003)
+engine.set_data(data)
+engine.set_strategy(strategy)
+results = engine.run()
+
+# 6. 分析结果
+analyzer = PerformanceAnalyzer(results)
+analyzer.print_summary()
+```
 
 ### 基础用法
 
@@ -200,19 +236,19 @@ class MyStrategy(BaseStrategy):
 ## 📚 学习路径建议
 
 ### 第一周：熟悉框架
-1. 运行 `example_single_strategy.py`，理解回测流程
+1. 运行 `example_strategy_manager.py`，先看 **示例 1**（单策略回测），理解回测流程
 2. 阅读 `strategies.py`，学习策略是如何实现的
 3. 尝试修改策略参数，观察结果变化
 
 ### 第二周：对比分析
-1. 运行 `example_compare_strategies.py`，对比不同策略
+1. 继续使用 `example_strategy_manager.py` 中的 **示例 4**，对比不同策略
 2. 分析为什么有些策略表现好，有些不好
 3. 思考：在什么市场环境下用什么策略
 
 ### 第三周：创建策略
-1. 学习 `example_custom_strategy.py` 中的示例
-2. 实现一个简单的自己的策略
-3. 回测并优化你的策略
+1. 参考 `strategies.py` 中已有策略和 README 里的“自定义策略”示例
+2. 在 `strategies.py` 中新增一个自己的策略类
+3. 通过 `StrategyManager` 或直接在代码中引用你的策略，回测并优化你的策略
 
 ### 第四周：深入优化
 1. 学习参数优化技巧

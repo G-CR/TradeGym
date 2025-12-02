@@ -236,6 +236,28 @@ class PerformanceAnalyzer:
         
         print("\n" + "="*60)
 
+    def calculate_metrics(self) -> Dict:
+        """
+        计算并返回一组常用的关键绩效指标
+        
+        Returns:
+            Dict: 包含总收益率、夏普比率、最大回撤、胜率等指标
+        """
+        metrics = {
+            '总收益率': self.results.get('total_return', 0.0),
+            '年化收益率': self.results.get('annual_return', 0.0),
+            '最大回撤': self.results.get('max_drawdown', 0.0),
+            '夏普比率': self.results.get('sharpe_ratio', 0.0),
+        }
+
+        trade_analysis = self.get_trade_analysis()
+        if trade_analysis:
+            metrics['胜率'] = trade_analysis.get('win_rate', 0.0)
+        else:
+            metrics['胜率'] = 0.0
+
+        return metrics
+
 
 def compare_strategies(results_list: List[Dict], strategy_names: List[str]):
     """
